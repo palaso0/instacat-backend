@@ -4,7 +4,7 @@ const port = process.env.PORT || 4000;
 import { User, Post, Like, Commentary, Follower } from "./models";
 
 const main = async () => {
-  await sequelize.sync({ force: true });
+  await sequelize.sync();
   app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
   });

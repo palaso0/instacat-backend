@@ -9,7 +9,7 @@ import {
 
 const router: Router = Router();
 
-router.get("/:PostId%Limit?", getUsers);
+router.get("/", getUsers);
 router.post("/", createUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);

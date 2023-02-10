@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { PostService } from "../services/post";
-
+import jwt from "jsonwebtoken";
 const postService = new PostService();
 
 export const getPosts = async (req: Request, res: Response) => {
@@ -16,6 +16,7 @@ export const getPosts = async (req: Request, res: Response) => {
 };
 
 export const createPost = async (req: Request, res: Response) => {
+  //TODO, add token for create Posts
   const { photos, description, userId } = req.body;
   try {
     const newPost = await postService.createPost(photos, description, userId);

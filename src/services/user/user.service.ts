@@ -3,10 +3,11 @@ import { Op } from "sequelize";
 import bcrypt from "bcrypt";
 
 export class UserService {
-  async getUser() {
+  async getUsers() {
     const users = await User.findAll({
       attributes: ["userId", "email", "name", "lastName", "userName", "photo"],
     });
+    return users;
   }
 
   async createUser(
@@ -18,7 +19,7 @@ export class UserService {
     photo: string
   ) {
     const hashPassword = await bcrypt.hash(password, 8);
-    const newUser = await User.create(
+    const newUser:any = await User.create(
       {
         email: email,
         password: hashPassword,
@@ -28,9 +29,19 @@ export class UserService {
         photo: photo,
       },
       {
-        fields: ["email", "password", "name", "lastName", "userName", "photo"],
-      }
+        fields: [
+          "userId",
+          "email",
+          "password",
+          "name",
+          "lastName",
+          "userName",
+          "photo",
+        ],
+      },
+      
     );
+    delete newUser.dataValues['password'];
     return newUser;
   }
   async findUser(id: string) {

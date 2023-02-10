@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { UserService } from "../services/user";
-
+import { createUserValidator } from "../validations";
 const userService = new UserService();
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const users = await userService.getUser();
+    const users = await userService.getUsers();
     res.status(200).json(users);
   } catch (error: any) {
     res.status(500).json({
@@ -16,13 +16,19 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
+  const {error,value} = createUserValidator.validate(req.body);
+  if(error){
+    return res.send(error.details)
+  }
+  
   const { email, password, name, lastName, userName, photo } = req.body;
   try {
     const userExist = await userService.userExists(email, userName);
     if (userExist) {
       throw new Error("UserName or Email Already Exists");
     }
-    const newUser = userService.createUser(
+    
+    await userService.createUser(
       email,
       password,
       name,

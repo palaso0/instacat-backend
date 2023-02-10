@@ -2,6 +2,16 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database";
 import { Post } from "./post.model";
 
+interface userInterface {
+  userId: string;
+  email: string;
+  password: string;
+  name: string;
+  lastName: string;
+  userName: string;
+  photo: string;
+}
+
 export const User = sequelize.define("User", {
   userId: {
     type: DataTypes.INTEGER,

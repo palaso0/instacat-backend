@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/users.routes";
 import loginRoutes from "./routes/login.routes";
 import postRoutes from "./routes/post.routes";
-import likeRoutes from "./routes/like.controller";
-import commentaryRoutes from "./routes/commentary.controller";
+import likeRoutes from "./routes/like.routes";
+import commentaryRoutes from "./routes/commentary.routes";
 
 import { User, Post, Like, Commentary, Follower } from "./models";
 import { sequelize } from "./database/database";
@@ -22,10 +22,10 @@ app.set("key", keys.key);
 app.use(express.json());
 
 //Routes
-app.use("/api/users", userRoutes);
-app.use("/api/login", loginRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/likes", likeRoutes);
-app.use("/api/commentaries", commentaryRoutes);
+app.use("/v1/api/users", userRoutes);
+app.use("/v1/api/login", loginRoutes);
+app.use("/v1/api/posts", postRoutes);
+app.use("/v1/api/likes", likeRoutes);
+app.use("/v1/api/commentaries", commentaryRoutes);
 
 export default app;
