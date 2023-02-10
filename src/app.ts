@@ -7,7 +7,7 @@ import likeRoutes from "./routes/like.controller";
 import commentaryRoutes from "./routes/commentary.controller";
 
 import { User, Post, Like, Commentary, Follower } from "./models";
-
+import { sequelize } from "./database/database";
 const app: Express = express();
 
 dotenv.config();
@@ -27,13 +27,5 @@ app.use("/api/login", loginRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/likes", likeRoutes);
 app.use("/api/commentaries", commentaryRoutes);
-
-export const updateDB = async () => {
-  User.sync();
-  Post.sync();
-  Like.sync();
-  Commentary.sync();
-  Follower.sync();
-};
 
 export default app;
