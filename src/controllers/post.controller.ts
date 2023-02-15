@@ -1,10 +1,21 @@
 import { Request, response, Response } from "express";
 import { PostService } from "../services/post";
-import jwt from "jsonwebtoken";
-const postService = new PostService();
+import { Post } from "../models";
+export interface GetUserInfoRequest extends Request {
+  user: {
+    userId: number;
+    email: string;
+    name: string;
+    lastName: string;
+    userName: string;
+    photo: string;
+    iat: number;
+  };
+}
+
+const postService = new PostService(Post);
 
 export const getPosts = async (req: Request, res: Response) => {
-  console.log("Mostrando posts");
   try {
     const posts = await postService.getPosts();
     res.status(200).json(posts);
@@ -15,18 +26,20 @@ export const getPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
-  //TODO, add token for create Posts
-  const { photos, description, userId } = req.body;
+export const createPost = async (req: any, res: Response) => {
+  const { photos, description } = req.body;
   try {
-    const newPost = await postService.createPost(photos, description, userId);
+    const newPost = await postService.createPost(
+      photos,
+      description,
+      req.user.userId
+    );
     res.status(200).json(newPost);
   } catch (error: any) {
     res.status(500).json({
       message: error.message,
     });
   }
-  res.status(200).json("user created");
 };
 
 export const getPostById = async (req: Request, res: Response) => {
@@ -56,7 +69,6 @@ export const removePost = async (req: Request, res: Response) => {
 };
 
 export const getPostsByUserId = async (req: Request, res: Response) => {
-  console.log("Mostrando posts");
   const { userId } = req.params;
   try {
     const posts = await postService.getPostsByUserId(userId);
@@ -67,3 +79,4 @@ export const getPostsByUserId = async (req: Request, res: Response) => {
     });
   }
 };
+

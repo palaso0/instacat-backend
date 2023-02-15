@@ -1,10 +1,13 @@
-import { User } from "../../models/user.model";
 import { Op } from "sequelize";
 import bcrypt from "bcrypt";
 
 export class UserService {
+  User: any;
+  constructor(User: any) {
+    this.User = User;
+  }
   async getUsers() {
-    const users = await User.findAll({
+    const users = await this.User.findAll({
       attributes: ["userId", "email", "name", "lastName", "userName", "photo"],
     });
     return users;
@@ -19,7 +22,7 @@ export class UserService {
     photo: string
   ) {
     const hashPassword = await bcrypt.hash(password, 8);
-    const newUser:any = await User.create(
+    const newUser: any = await this.User.create(
       {
         email: email,
         password: hashPassword,
@@ -38,22 +41,22 @@ export class UserService {
           "userName",
           "photo",
         ],
-      },
-      
+      }
     );
-    delete newUser.dataValues['password'];
+    delete newUser.dataValues["password"];
     return newUser;
   }
   async findUser(id: string) {
-    const user = await User.findOne({
+    const user = await this.User.findOne({
       where: {
         userId: id,
       },
+      attributes: ["userId", "email", "name", "lastName", "userName", "photo"],
     });
     return user;
   }
   async removeUser(id: string) {
-    await User.destroy({
+    await this.User.destroy({
       where: {
         userId: id,
       },
@@ -68,7 +71,7 @@ export class UserService {
     userName: string,
     photo: string
   ) {
-    const user: any = await User.findByPk(id);
+    const user: any = await this.User.findByPk(id);
     user.email = email;
     user.password = password;
     user.name = name;
@@ -78,7 +81,7 @@ export class UserService {
     await user.save();
   }
   async userExists(email: string, userName: string): Promise<boolean> {
-    const user = await User.findOne({
+    const user = await this.User.findOne({
       where: {
         [Op.or]: [{ email: email }, { userName: userName }],
       },

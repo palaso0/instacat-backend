@@ -1,15 +1,17 @@
-import { Post } from "../../models/";
-import { Op } from "sequelize";
-
 export class PostService {
+  Post: any;
+  constructor(Post: any) {
+    this.Post = Post;
+  }
   async getPosts() {
-    const Posts = await Post.findAll({
+    const Posts = await this.Post.findAll({
       attributes: ["postId", "photos", "description", "createdAt"],
     });
+    return Posts;
   }
 
-  async createPost(photos: string[], description: string, userId: string) {
-    const newPost = await Post.create(
+  async createPost(photos: string[], description: string, userId: number) {
+    const newPost = await this.Post.create(
       {
         photos: photos,
         description: description,
@@ -23,7 +25,7 @@ export class PostService {
   }
 
   async findPostById(id: string) {
-    const post = await Post.findOne({
+    const post = await this.Post.findOne({
       where: {
         postId: id,
       },
@@ -32,7 +34,7 @@ export class PostService {
   }
 
   async removePost(id: string) {
-    await Post.destroy({
+    await this.Post.destroy({
       where: {
         PostId: id,
       },
@@ -44,14 +46,14 @@ export class PostService {
     description: string,
     userId: string
   ) {
-    const post: any = await Post.findByPk(id);
+    const post: any = await this.Post.findByPk(id);
     post.photos = photos;
     post.description = description;
     post.userId = userId;
     await post.save();
   }
   async getPostsByUserId(userId: string) {
-    const posts = await Post.findAll({
+    const posts = await this.Post.findAll({
       where: {
         userId: userId,
       },

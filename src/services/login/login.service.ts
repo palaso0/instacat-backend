@@ -1,11 +1,12 @@
-import { User } from "../../models/user.model";
-import { Op } from "sequelize";
 import bcrypt from "bcrypt";
 
 export class LoginService {
+  User: any;
+  constructor(User: any) {
+    this.User = User;
+  }
   async isLoginValid(email: string, password: string): Promise<boolean> {
-
-    const user: any = await User.findOne({
+    const user: any = await this.User.findOne({
       where: {
         email: email,
       },
@@ -15,7 +16,7 @@ export class LoginService {
   }
 
   async getUserByEmail(email: string) {
-    const user = await User.findOne({
+    const user = await this.User.findOne({
       where: { email: email },
       attributes: ["userId", "email", "name", "lastName", "userName", "photo"],
     });

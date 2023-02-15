@@ -1,33 +1,32 @@
 import { Request, Response } from "express";
-import { User } from "../models/user.model";
-import { sign, SignOptions } from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
 import { LoginService } from "../services/login";
 import { UserService } from "../services/user";
-
+import { User } from "../models";
 import {
   loginValidator,
   signupValidator,
 } from "../validations/login.validator";
 
-const privateKey = process.env.SECRET || "instaCat";
-const loginService = new LoginService();
-const userService = new UserService();
+const loginService = new LoginService(User);
+const userService = new UserService(User);
 
 export const login = async (req: Request, res: Response) => {
   const { error, value } = loginValidator.validate(req.body);
-  if (error) {
-    return res.send(error.details);
-  }
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
   const { email, password } = req.body;
-  const validPassword = await loginService.isLoginValid(email, password);
-  if (!validPassword) {
-    res.send("Invalid password");
-  }
+
   const user = await loginService.getUserByEmail(email);
-  const token = sign(user?.dataValues, privateKey);
+  if (user == null) return res.status(400).json({ error: "User not found" });
+
+  const validPassword = await loginService.isLoginValid(email, password);
+  if (!validPassword) return res.json({ error: "Invalid password" });
+
+  const token = sign(user?.dataValues, `${process.env.ACCESS_TOKEN_SECRET}`);
   res.json({
-    user,
+    error: null,
+    user: user.dataValues,
     token,
   });
 };
@@ -53,14 +52,18 @@ export const signUp = async (req: Request, res: Response) => {
       userName,
       photo
     );
-    const token = sign(newUser?.dataValues, privateKey);
+    const token = sign(
+      newUser?.dataValues,
+      `${process.env.ACCESS_TOKEN_SECRET}`
+    );
     res.json({
+      error: null,
       newUser,
       token,
     });
   } catch (error: any) {
     res.status(500).json({
-      message: error.message,
+      error: error.message,
     });
   }
 };
